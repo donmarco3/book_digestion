@@ -1,35 +1,76 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useEffect, useState } from "react";
+import type { Note } from "./types";
+import NewNoteForm from "./components/NewNoteForm";
+import NotesList from "./components/NotesList";
+import FullNote from "./components/FullNote";
+import { Routes, Route } from "react-router-dom";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [notes, setNotes] = useState<Note[]>(() => {
+    const localValue = localStorage.getItem("NOTES");
+    if (localValue == null) return [];
+
+    return JSON.parse(localValue) as Note[];
+  });
+
+  useEffect(() => {
+    localStorage.setItem("NOTES", JSON.stringify(notes));
+  }, [notes]);
+
+  const [showForm, setShowForm] = useState(false);
+
+  function addNote(note: Omit<Note, "id">) {
+    setNotes((currentNotes) => {
+      return [
+        ...currentNotes,
+        {
+          id: crypto.randomUUID(),
+          ...note,
+        },
+      ];
+    });
+    setShowForm(false);
+  }
+
+  function deleteNote(id: string) {
+    setNotes((currentNotes) => {
+      return currentNotes.filter((note) => note.id !== id);
+    });
+  }
+
+  function displayForm() {
+    setShowForm((prev) => !prev);
+  }
+
+  function Home() {
+    return (
+      <>
+        <button
+          className="block mx-auto my-4 p-2 rounded-md text-white bg-indigo-500 shadow-lg shadow-indigo-500/50"
+          onClick={displayForm}
+        >
+          {showForm ? "Close" : "Add Note"}
+        </button>
+        {showForm && <NewNoteForm onSubmit={addNote} />}
+        <NotesList notes={notes} deleteNote={deleteNote} />
+      </>
+    );
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route
+        path="/notes/:id"
+        element={<FullNote notes={notes} deleteNote={deleteNote} />}
+      />
+
+      <Route
+        path="*"
+        element={<div className="p-6 text-center">Page not found</div>}
+      />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
