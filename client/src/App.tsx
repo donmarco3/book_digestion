@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import type { Note } from "./types";
-import NewNoteForm from "./components/NewNoteForm";
-import NotesList from "./components/NotesList";
-import FullNote from "./components/FullNote";
+import NotesList from "./Notes/NotesList";
+import FullNote from "./Notes/FullNote";
 import { Routes, Route } from "react-router-dom";
+import Layout from "./Layout";
+import BooksList from "./Books/BooksList";
+import BookNotes from "./Books/BookNotes";
 
 function App() {
   const [notes, setNotes] = useState<Note[]>(() => {
@@ -44,32 +46,53 @@ function App() {
 
   function Home() {
     return (
-      <>
-        <button
-          className="block mx-auto my-4 p-2 rounded-md text-white bg-indigo-500 shadow-lg shadow-indigo-500/50"
-          onClick={displayForm}
-        >
-          {showForm ? "Close" : "Add Note"}
-        </button>
-        {showForm && <NewNoteForm onSubmit={addNote} />}
-        <NotesList notes={notes} deleteNote={deleteNote} />
-      </>
+      <div className="max-w-6xl mx-auto px-4 py-5">
+        <h1>This is the homepage</h1>
+      </div>
     );
   }
 
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route
-        path="/notes/:id"
-        element={<FullNote notes={notes} deleteNote={deleteNote} />}
-      />
-
-      <Route
-        path="*"
-        element={<div className="p-6 text-center">Page not found</div>}
-      />
-    </Routes>
+    <>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="books" element={<BooksList notes={notes} />} />
+          <Route
+            path="notes"
+            element={
+              <NotesList
+                notes={notes}
+                deleteNote={deleteNote}
+                displayForm={displayForm}
+                showForm={showForm}
+                addNote={addNote}
+              />
+            }
+          />
+          <Route
+            path="books/:book"
+            element={
+              <BookNotes
+                notes={notes}
+                deleteNote={deleteNote}
+                displayForm={displayForm}
+                showForm={showForm}
+                addNote={addNote}
+              />
+            }
+          />
+          <Route
+            path="/notes/:id"
+            element={<FullNote notes={notes} deleteNote={deleteNote} />}
+          />
+          <Route
+            path="*"
+            element={<div className="p-6 text-center">Page not found</div>}
+          />
+        </Route>
+      </Routes>
+    </>
   );
 }
 

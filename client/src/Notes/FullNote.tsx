@@ -1,5 +1,5 @@
 import type { Note } from "../types";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 
 type Props = {
   notes?: Note[];
@@ -19,20 +19,26 @@ function FullNote({ notes, deleteNote }: Props) {
   }
 
   return (
-    <div>
-      <h1>{note.noteTitle}</h1>
-      <p className="text-sm text-gray-500 mb-4">
-        {note.bookTitle} • {note.category} • page {note.pageNumber}
-      </p>
+    <div className="max-w-6xl mx-auto px-4 py-5">
+      <h1 className="text-2xl font-bold">{note.noteTitle}</h1>
+      <div className="text-md text-gray-500 mb-4">
+        <Link
+          to={`/books/${encodeURIComponent(note.bookTitle)}`}
+          className="text-indigo-600 hover:underline"
+        >
+          {note.bookTitle}
+        </Link>{" "}
+        • page {note.pageNumber}
+        <p>{note.category}</p>
+      </div>
       <div>{note.noteText}</div>
-
       {deleteNote && (
         <button
           onClick={() => {
             deleteNote(note.id);
             navigate("/");
           }}
-          className="px-3 py-1 bg-red-500 text-white rounded"
+          className="px-3 py-1 mt-10 bg-red-500 text-white rounded"
         >
           Delete
         </button>

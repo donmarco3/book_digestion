@@ -1,6 +1,8 @@
 TODO:
 create full UI (nav bar, homepage)
-research how FullNote page works
+-> nav bar (Notes/Home, Books)
+book title on form
+-> select from current books or add new book
 
 book page
 view all book in the library
