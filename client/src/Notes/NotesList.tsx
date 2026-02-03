@@ -19,7 +19,7 @@ function NotesList({
 }: Props) {
   return (
     <div className="max-w-6xl mx-auto my-4">
-      {showForm && <NewNoteForm onSubmit={addNote} />}
+      {showForm && <NewNoteForm notes={notes} onSubmit={addNote} />}
       <button
         onClick={displayForm}
         className="px-3 py-1 rounded-md text-white bg-indigo-500 shadow-lg shadow-indigo-500/50 hover:bg-indigo-600"
